@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  pickle-rce-app:
+    build: .
+    container_name: cve-pickle-deserialization-lab
+    ports:
+      - "5000:5000"
+    restart: always
