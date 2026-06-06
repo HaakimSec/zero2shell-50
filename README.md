@@ -1,4 +1,21 @@
-# ZeroToShell-50 🚀
+```text
+====================================================================================
+ ███████╗███████╗██████╗  ██████╗ ██████╗  ███████╗██╗  ██╗███████╗██╗     ██╗     
+ ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗╚════██╗ ██╔════╝██║  ██║██╔════╝██║     ██║     
+   ███╔╝ █████╗  ██████╔╝██║   ██║ █████╔╝ ███████╗███████║█████╗  ██║     ██║     
+  ███╔╝  ██╔══╝  ██╔══██╗██║   ██║██╔═══╝  ╚════██║██╔══██║██╔══╝  ██║     ██║     
+ ███████╗███████╗██║  ██║╚██████╔╝███████╗ ███████║██║  ██║███████╗███████╗███████╗
+ ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
+                                                      [ 50 Containerized RCE Labs ]
+====================================================================================
+```
+<p align="center">
+  <img src="https://img.shields.io/badge/Labs-7%20%2F%2050-vividblue?style=for-the-badge&logo=docker" alt="Labs Progress">
+  <img src="https://img.shields.io/badge/Focus-RCE%20%26%20Deserialization-red?style=for-the-badge&logo=target" alt="Focus Area">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
+</p>
+
+---
 
 > **From Zero to Shell — Master Modern RCE Exploitation in 50 Hands-On Labs**
 
