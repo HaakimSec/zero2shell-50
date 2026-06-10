@@ -7,6 +7,7 @@ First off, thank you for considering contributing to ZeroToShell-50! This projec
 - [Code of Conduct](#code-of-conduct)
 - [What We're Looking For](#what-were-looking-for)
 - [Quality Requirements](#quality-requirements)
+- [Lab Architecture Standards](#lab-architecture-standards)
 - [Pull Request Process](#pull-request-process)
 - [Quality Checklist](#-quality-checklist)
 - [Questions?](#questions)
@@ -87,6 +88,7 @@ $data = unserialize($_FILES['backup']['manifest']);  // <-- RCE HERE
 
 # ❌ Bad: Vague, no specific sink
 # "The application has an RCE vulnerability somewhere"
+```
 
 ## Lab Architecture Standards
 
