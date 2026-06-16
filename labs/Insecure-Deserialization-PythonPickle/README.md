@@ -26,8 +26,6 @@ The target endpoint is available locally at: `http://localhost:5000/api/v1/dashb
 To demonstrate the arbitrary object instantiation breakout, fire the repository execution script:
 
 ```bash 
-# Execute the payload generation client
-python3 exploit/exploit.py
 
 ```
 
@@ -50,3 +48,5 @@ To cleanly erase the target image layers and isolate network variables:
 docker compose down -v
 
 ```
+```markdown
+here is a screenshot of [poc](labs/Insecure-Deserialization-PythonPickle/assets/1.png) ```
