@@ -1,0 +1,55 @@
+name: Security Scanning
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 8 * * 6'  # Weekly Saturday scan
+
+jobs:
+  trivy-scan:
+    name: Trivy Vulnerability Scan
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        lab: [lab_01, lab_03, lab_04, lab_06, lab_07, lab_08, lab_10, lab_11, lab_12, lab_13, lab_14]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Find lab directory
+        id: find-lab
+        run: |
+          lab_dir=$(find labs/ -maxdepth 1 -name "${{ matrix.lab }}*" -type d | head -1)
+          echo "directory=$lab_dir" >> $GITHUB_OUTPUT
+
+      - name: Build Docker image
+        run: |
+          cd ${{ steps.find-lab.outputs.directory }}
+          docker compose build --no-cache
+          
+          # Get the built image name
+          image_name=$(docker compose images -q | head -1)
+          echo "IMAGE=$image_name" >> $GITHUB_ENV
+
+      - name: Run Trivy scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE }}
+          format: 'table'
+          exit-code: '0'  # Don't fail — labs contain vulnerable software by design
+          severity: 'CRITICAL,HIGH'
+          output: 'trivy-results.txt'
+
+      - name: Upload scan results
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-${{ matrix.lab }}
+          path: trivy-results.txt
+
+      - name: Cleanup
+        if: always()
+        run: |
+          cd ${{ steps.find-lab.outputs.directory }}
+          docker compose down -v

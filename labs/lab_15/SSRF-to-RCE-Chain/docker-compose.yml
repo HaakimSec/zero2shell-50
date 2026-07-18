@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  public-web:
+    build: ./public-app
+    container_name: zero2shell-lab15-public
+    ports:
+      - "8095:3000"
+    environment:
+      - INTERNAL_BACKEND_URL=http://internal-backend:5000
+    restart: always
+
+  internal-backend:
+    build: ./internal-backend
+    container_name: zero2shell-lab15-internal
+    # Notice: No ports are exposed to the host machine. It is completely isolated.
+    restart: always

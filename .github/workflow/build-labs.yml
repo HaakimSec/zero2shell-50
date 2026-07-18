@@ -1,0 +1,75 @@
+name: Build Lab Containers
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 6 * * 1'  # Weekly Monday morning build check
+
+jobs:
+  detect-changes:
+    name: Detect Changed Labs
+    runs-on: ubuntu-latest
+    outputs:
+      labs: ${{ steps.changed.outputs.labs }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find changed lab directories
+        id: changed
+        run: |
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            # On schedule, build ALL labs
+            labs=$(find labs/ -name "docker-compose.yml" -exec dirname {} \; | sort -u | jq -R -s -c 'split("\n")[:-1]')
+          else
+            # On push/PR, only build changed labs
+            labs=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep "^labs/" | cut -d'/' -f1-2 | sort -u | jq -R -s -c 'split("\n")[:-1]')
+          fi
+          echo "labs=$labs" >> $GITHUB_OUTPUT
+          echo "Labs to build: $labs"
+
+  build-lab:
+    name: Build ${{ matrix.lab }}
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.labs != '[]' && needs.detect-changes.outputs.labs != '' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        lab: ${{ fromJson(needs.detect-changes.outputs.labs) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build ${{ matrix.lab }}
+        run: |
+          echo "Building lab: ${{ matrix.lab }}"
+          cd ${{ matrix.lab }}
+          docker compose build --no-cache
+
+      - name: Start & Health Check
+        run: |
+          cd ${{ matrix.lab }}
+          docker compose up -d
+          sleep 15
+          # Check if container is still running
+          if docker compose ps | grep -q "Up"; then
+            echo "✅ Container started successfully"
+          else
+            echo "❌ Container failed to start"
+            docker compose logs
+            exit 1
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: |
+          cd ${{ matrix.lab }}
+          docker compose down -v

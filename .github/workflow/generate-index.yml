@@ -1,0 +1,44 @@
+name: Generate Lab Index
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'labs/**/README.md'
+
+jobs:
+  update-index:
+    name: Update Main README Index
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate Lab Table
+        run: |
+          echo "Scanning labs..."
+          
+          # Build table from lab READMEs
+          echo "| # | Lab | CVE | CVSS | Type | Status |" > lab-table.md
+          echo "|---|-----|-----|------|------|--------|" >> lab-table.md
+          
+          for dir in labs/lab_*/; do
+            lab_num=$(basename "$dir" | cut -d'_' -f2)
+            readme="$dir/README.md"
+            
+            if [ -f "$readme" ]; then
+              cve=$(grep -m1 "CVE-" "$readme" | sed 's/.*\(CVE-[0-9-]*\).*/\1/' || echo "—")
+              title=$(head -5 "$readme" | grep -m1 "^#" | sed 's/^#* //')
+              echo "| $lab_num | $title | $cve | — | — | ✅ |" >> lab-table.md
+            fi
+          done
+
+      - name: Commit updated index
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add lab-table.md
+          git diff --quiet && git diff --staged --quiet || git commit -m "📋 Auto-update lab index"
+          git push

@@ -1,0 +1,56 @@
+name: Zero2Shell Core CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Job 1: Check Dockerfiles for errors
+  docker-lint:
+    name: Lint Dockerfiles
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Hadolint on all Dockerfiles
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          recursive: true
+          # Ignore specific rules if legacy base images complain, otherwise strict checking
+          ignore: DL3008 # Pin versions in apt-get install (optional override for convenience)
+
+  # Job 2: Validate Docker Compose structure across the lab matrix
+  validate-compose:
+    name: Validate Lab Deployments
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Verify Docker Compose Files
+        run: |
+          echo "Starting structural verification of lab matrix..."
+
+          # Find all directories containing a docker-compose.yml file
+          compose_files=$(find labs/ -name "docker-compose.yml")
+
+          for file in $compose_files; do
+            echo "--------------------------------------------------"
+            echo "Checking: $file"
+
+            # Run docker-compose config to validate YAML syntax and structure without starting containers
+            docker compose -f "$file" config > /dev/null
+
+            if [ $? -eq 0 ]; then
+              echo "✅ $file is structurally valid."
+            else
+              echo "❌ Error found in $file"
+              exit 1
+            fi
+          done

@@ -1,0 +1,137 @@
+# ============================================
+# Zero2Shell-50 .gitignore
+# ============================================
+
+# --- Dependencies ---
+node_modules/
+vendor/
+__pycache__/
+*.pyc
+*.pyo
+*.class
+*.jar
+*.war
+*.ear
+
+# --- Build Artifacts ---
+target/
+dist/
+build/
+out/
+*.egg-info/
+*.egg
+
+# --- IDE & Editor Files ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-workspace
+*.sublime-project
+
+# --- Docker ---
+# Ignore built images and volumes (but keep Dockerfiles and compose files)
+docker-compose.override.yml
+.env.local
+.env.production
+
+# --- Exploit Artifacts ---
+# Ignore generated payloads but keep exploit scripts
+labs/**/exploit/*.phar
+labs/**/exploit/*.jar
+labs/**/*.phar
+labs/**/payload.bin
+labs/**/exploit_output.txt
+
+# --- OS Files ---
+*Zone.Identifier
+*.lnk
+
+# --- Logs ---
+*.log
+logs/
+labs/**/logs/
+
+# --- Temporary Files ---
+tmp/
+temp/
+*.tmp
+*.bak
+*.orig
+
+# --- Package Manager Lock Files (optional) ---
+# Keep these if you want deterministic builds
+# package-lock.json
+# yarn.lock
+# composer.lock
+
+# --- Maven ---
+.mvn/
+mvnw
+mvnw.cmd
+
+# --- Python Virtual Environments ---
+venv/
+.venv/
+env/
+.env/
+pip-wheel-metadata/
+
+# --- Terraform (if used for lab deployment) ---
+*.tfstate
+*.tfstate.*
+.terraform/
+terraform.tfvars
+
+# --- Secrets & Credentials ---
+*.pem
+*.key
+*.crt
+credentials.json
+service-account.json
+.env.secrets
+
+# --- Lab-Specific ---
+# Proof-of-exploit files that get created during lab testing
+labs/**/rce_proof.txt
+labs/**/pwned.txt
+labs/**/*_pwned*
+labs/**/shell.jsp
+labs/**/shell.php
+labs/**/cmd.jsp
+labs/**/cmd.php
+labs/**/webshell*
+labs/**/proof.txt
+labs/**/exploit.phar
+labs/**/*.phar
+
+# --- Uploaded files in lab environments ---
+labs/**/uploads/*
+!labs/**/uploads/.gitkeep
+
+# --- Database files ---
+*.db
+*.sqlite
+*.sqlite3
+
+# --- Archive files ---
+*.tar
+*.tar.gz
+*.zip
+*.rar
+!labs/**/*.tar.gz.b64
+
+# --- Coverage & Testing ---
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# --- Misc ---
+*.orig
+*.rej
+.gitattributes
